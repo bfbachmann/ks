@@ -68,13 +68,13 @@ func init() {
 		ksPath = "~/.kube"
 	}
 
-	// Parse paths from envvar appending the master config file if it exists
+	// Parse paths from envvar, prepending the master config file if it exists
 	paths := strings.Split(ksPath, ":")
 	_, err = os.Stat(masterConfigPath)
 	if err != nil && !os.IsNotExist(err) {
 		fatalf("Error checking file %s: %v\n", masterConfigPath, err)
 	} else if err == nil {
-		paths = append(paths, masterConfigPath)
+		paths = append([]string{masterConfigPath}, paths...)
 	}
 
 	// Load kubeconfig
