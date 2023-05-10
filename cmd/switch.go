@@ -11,37 +11,42 @@ var switchCmd = &cobra.Command{
 	Use:     "switch",
 	Aliases: []string{"s"},
 	Short:   "Switch to a different context",
-	Long: `Switch to a different context in one of the kubeconfig files under KSPATH.
+	Long: `Switch to a different context and/or namespace in one of the kubeconfig files under KSPATH.
+`,
+	Example: `  ks switch my-context -n my-namespace	# switch to context "my-context" with namespace "my-namespace"
+  ks switch my-other-context	# switch to context "my-other-context" with default/existing namespace
+  ks switch -n my-namespace	# use "my-namespace" in the current context
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) != 1 {
-			fatalf(cmd.Long)
-		}
-
-		name := args[0]
-
 		ns, err := cmd.Flags().GetString("namespace")
-		handleFatal(err, "Error reading namespace flag: %v\n", err)
+		handleFatal(err, "Error reading namespace flag: %v", err)
 
 		// Load kubeconfig from file
 		confPath := os.Getenv("KUBECONFIG")
 		conf, err := loadKubeconfig([]string{confPath})
-		handleFatal(err, "Error loading config from %s: %v\n", confPath, err)
+		handleFatal(err, "Error loading config from %s: %v", confPath, err)
 
-		ctx, ok := conf.Contexts[name]
-		if !ok {
-			fatalf("No such context: %s\n", name)
+		// Get context to switch to, defaulting to current context if one was not specified
+		ctxName := conf.CurrentContext
+		if len(args) > 0 {
+			ctxName = args[0]
 		}
 
-		conf.CurrentContext = name
+		ctx, ok := conf.Contexts[ctxName]
+		if !ok {
+			fatalf("No such context: %s", ctxName)
+		}
+
+		// Set current context and namespace, if specified
+		conf.CurrentContext = ctxName
 		if ns != "" {
 			ctx.Namespace = ns
 		}
 
+		// Write updated config to file
 		err = writeKubeconfig(masterConfigPath, conf)
-		handleFatal(err, "Error writing config: %v\n", err)
-
-		infof("Switched to context %s (namespace: %s)\n", name, ctx.Namespace)
+		handleFatal(err, "Error writing config: %v", err)
+		infof("Switched to context %s (namespace: %s)", ctxName, ctx.Namespace)
 	},
 }
 

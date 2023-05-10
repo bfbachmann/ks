@@ -16,27 +16,27 @@ import (
 // handleFatal prints the given message and exits with code 1 if the error is not nil. Otherwise, it does nothing.
 func handleFatal(err error, format string, a ...any) {
 	if err != nil {
-		fmt.Printf(format, a...)
+		fatalf(format, a...)
 	}
 }
 
 // fatalf prints an error message and immediately exits with code 1.
 func fatalf(format string, a ...any) {
-	fmt.Printf(format, a...)
+	infof(format, a...)
 	os.Exit(1)
 }
 
 // infof prints an info message.
 func infof(format string, a ...any) {
-	fmt.Printf(format, a...)
+	fmt.Printf(format+"\n", a...)
 }
 
 // printCtx prints information about a context.
 func printCtx(name string, ctx *api.Context, verbose bool) {
 	if verbose {
-		infof("%s\n  Cluster: %s\n  Namespace: %s\n\n", name, ctx.Cluster, ctx.Namespace)
+		infof("%s\n  Cluster: %s\n  Namespace: %s\n", name, ctx.Cluster, ctx.Namespace)
 	} else {
-		infof("%s\n", name)
+		infof("%s", name)
 	}
 }
 

@@ -24,8 +24,10 @@ By default, KSPATH will be set to ${HOME}/.kube.
 
 Example: KSPATH="~/.kube:~/code/my-project/conf:~/clusters/local.yaml"
 
-This program, when run, will also find all valid kubeconfig files in the paths specified in KSPATH, merge them, 
-and write them to ${HOME}/.ks/config.
+This program, when run, will find all valid kubeconfig files in the paths specified in KSPATH, merge them, and write 
+them to ${HOME}/.ks/config. Higher precedence is given to files or directories that appear closer to the beginning of 
+KSPATH. Existing config at ${HOME}/.ks/config will always get lowest precedence, but the current context and namespace
+listed there will persist unless changed manually.
 `,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
@@ -52,7 +54,7 @@ func init() {
 	info, err := os.Stat(ksHomeDir)
 	if err != nil {
 		if !os.IsNotExist(err) {
-			fatalf("Error checking %s: %v\n", ksHomeDir, err)
+			fatalf("Error checking %s: %v", ksHomeDir, err)
 		}
 
 		// Not initialized, abort
@@ -68,20 +70,39 @@ func init() {
 		ksPath = "~/.kube"
 	}
 
-	// Parse paths from envvar, prepending the master config file if it exists
+	// First we need to get the current context and namespace, so we can make sure not to overwrite it later
+	var currentCtxName string
+	var currentNs string
+	if existingConfPath := os.Getenv("KUBECONFIG"); existingConfPath != "" {
+		conf, err := loadKubeconfig([]string{existingConfPath})
+		handleFatal(err, "Error loading existing config from %s: %v", existingConfPath, err)
+
+		currentCtxName = conf.CurrentContext
+		if ctx, ok := conf.Contexts[currentCtxName]; ok {
+			currentNs = ctx.Namespace
+		}
+	}
+
+	// Parse paths from envvar, appending the master config file if it exists
 	paths := strings.Split(ksPath, ":")
 	_, err = os.Stat(masterConfigPath)
 	if err != nil && !os.IsNotExist(err) {
-		fatalf("Error checking file %s: %v\n", masterConfigPath, err)
+		fatalf("Error checking file %s: %v", masterConfigPath, err)
 	} else if err == nil {
-		paths = append([]string{masterConfigPath}, paths...)
+		paths = append(paths, masterConfigPath)
 	}
 
 	// Load kubeconfig
 	conf, err := loadKubeconfig(paths)
-	handleFatal(err, "Error loading config: %v\n", err)
+	handleFatal(err, "Error loading config: %v", err)
+
+	// Make sure we restore the current context and namespace, if the context still exists
+	if ctx, exists := conf.Contexts[currentCtxName]; exists {
+		conf.CurrentContext = currentCtxName
+		ctx.Namespace = currentNs
+	}
 
 	// Encode and write to file
 	err = writeKubeconfig(masterConfigPath, conf)
-	handleFatal(err, "Error writing config: %v\n", err)
+	handleFatal(err, "Error writing config: %v", err)
 }

@@ -15,9 +15,9 @@ var deactivateCmd = &cobra.Command{
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		err := os.RemoveAll(initPath)
-		handleFatal(err, "Error removing %s: %v\n", initPath, err)
+		handleFatal(err, "Error removing %s: %v", initPath, err)
 
-		infof("Deactivated. Your KUBECONFIG will take its normal value for future shell sessions.\n")
+		infof("Deactivated. Your KUBECONFIG will take its normal value for future shell sessions.")
 	},
 }
 

@@ -16,15 +16,15 @@ var listCmd = &cobra.Command{
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		verbose, err := cmd.Flags().GetBool("verbose")
-		handleFatal(err, "Error getting verbose flag: %v\n", err)
+		handleFatal(err, "Error getting verbose flag: %v", err)
 
 		// Load kubeconfig from file
 		confPath := os.Getenv("KUBECONFIG")
 		conf, err := loadKubeconfig([]string{confPath})
-		handleFatal(err, "Error loading config from %s: %v\n", confPath, err)
+		handleFatal(err, "Error loading config from %s: %v", confPath, err)
 
 		if len(conf.Contexts) == 0 {
-			infof("No contexts found. Please make sure your KSPATH is set correctly.\n")
+			infof("No contexts found. Please make sure your KSPATH is set correctly.")
 		}
 
 		// Print current context first

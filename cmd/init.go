@@ -29,13 +29,13 @@ shell initialization script (.bashrc, .zshrc, config.fish).
 			// Abort if the .ks directory already exists (i.e. if we're already initialized)
 			info, err := os.Stat(ksHomeDir)
 			if err == nil && info.IsDir() {
-				fatalf("Already initialized. Use --force flag to for reinitialization.\n")
+				fatalf("Already initialized. Use --force flag to for reinitialization.")
 			}
 		}
 
 		// Make sure the .ks directory exists
 		err = os.MkdirAll(ksHomeDir, 0755)
-		handleFatal(err, "Error creating %s: %v\n", ksHomeDir, err)
+		handleFatal(err, "Error creating %s: %v", ksHomeDir, err)
 
 		// Get the user's default shell
 		shell := os.Getenv("SHELL")
@@ -51,17 +51,17 @@ shell initialization script (.bashrc, .zshrc, config.fish).
 		case "fish":
 			shellInitFilePath = homeDir + ".config/fish/config.fish"
 		default:
-			fatalf("unknown shell: %s\n", shellBaseName)
+			fatalf("unknown shell: %s", shellBaseName)
 		}
 
 		// Open the shell init file
 		initFile, err := os.OpenFile(shellInitFilePath, os.O_APPEND|os.O_WRONLY, 0644)
-		handleFatal(err, "Error updating %s: %v\n", shellInitFilePath, err)
+		handleFatal(err, "Error updating %s: %v", shellInitFilePath, err)
 		defer initFile.Close()
 
 		// Write some data to the file
 		_, err = fmt.Fprintln(initFile, shellInitScript)
-		handleFatal(err, "Error writing file %s: %v\n", shellInitFilePath, err)
+		handleFatal(err, "Error writing file %s: %v", shellInitFilePath, err)
 
 		infof(`Initialized. Use "ks activate" to use kubeconfig generated from KSPATH for new shell sessions.
 `)
