@@ -4,6 +4,10 @@
 and namespaces. It is primarily designed to handle cases where the user has multiple and frequently-changing kubeconfig
 files.
 
+## Installing
+
+Find the appropriate binary for your system under [releases](https://github.com/bfbachmann/ks/releases).
+
 ## How It Works
 
 The main function of `ks` is to find all kubeconfig files listed in the environment variable `KSPATH` (defaults to
