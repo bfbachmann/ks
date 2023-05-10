@@ -10,6 +10,7 @@ import (
 var deactivateCmd = &cobra.Command{
 	Use:     "deactivate",
 	Aliases: []string{"d"},
+	Args:    cobra.ExactArgs(0),
 	Short:   "Return to regular KUBECONFIG",
 	Long: `This command will make it so ks has no effect on your KUBECONFIG.
 `,

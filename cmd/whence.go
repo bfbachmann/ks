@@ -12,6 +12,7 @@ import (
 // whenceCmd represents the whence command
 var whenceCmd = &cobra.Command{
 	Use:     "whence",
+	Args:    cobra.ExactArgs(0),
 	Aliases: []string{"w"},
 	Short:   "List all available kubeconfig files",
 	Long: `This command reveals the locations of all kubeconfig files available under KSPATH in order of loading 

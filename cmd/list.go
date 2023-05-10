@@ -11,6 +11,7 @@ import (
 var listCmd = &cobra.Command{
 	Use:     "list",
 	Aliases: []string{"l"},
+	Args:    cobra.ExactArgs(0),
 	Short:   "List available contexts",
 	Long: `List all contexts found in files or directories listed in $ks_PATH.
 `,
