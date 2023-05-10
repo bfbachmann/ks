@@ -9,3 +9,7 @@ tidy:
 .PHONY: vendor
 vendor: tidy
 	go mod vendor
+
+.PHONY: release
+release:
+	gox -output="bin/ks_{{.OS}}_{{.Arch}}"
