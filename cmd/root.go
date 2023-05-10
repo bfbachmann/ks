@@ -96,10 +96,22 @@ func init() {
 	conf, err := loadKubeconfig(paths)
 	handleFatal(err, "Error loading config: %v", err)
 
-	// Make sure we restore the current context and namespace, if the context still exists
+	// Make sure we restore the current context and namespace, if the context still exists. Otherwise, print a warning
+	// message to let the user know that their current context has changed.
 	if ctx, exists := conf.Contexts[currentCtxName]; exists {
 		conf.CurrentContext = currentCtxName
 		ctx.Namespace = currentNs
+	} else {
+		var newNs string
+		if newCtx, ok := conf.Contexts[conf.CurrentContext]; ok {
+			newNs = newCtx.Namespace
+		}
+		infof(
+			`WARNING: Context %s no longer exists. Current context is now %s (namespace %s).`,
+			currentCtxName,
+			conf.CurrentContext,
+			newNs,
+		)
 	}
 
 	// Encode and write to file
