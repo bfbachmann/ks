@@ -15,15 +15,15 @@ const example = `
 
 // switchCmd represents the switch command
 var switchCmd = &cobra.Command{
-	Use:     "switch",
+	Use:     "switch [name]",
 	Aliases: []string{"s"},
+	Args:    cobra.MaximumNArgs(1),
 	Short:   "Switch to a different context",
 	Long: `Switch to a different context and/or namespace in one of the kubeconfig files under KSPATH.
 `,
 	Example: strings.TrimLeft(example, "\n"),
 	Run: func(cmd *cobra.Command, args []string) {
-		ns, err := cmd.Flags().GetString("namespace")
-		handleFatal(err, "Error reading namespace flag: %v", err)
+		flagNamespace := getStringFlag(cmd, "namespace")
 
 		// Load kubeconfig from file
 		confPath := os.Getenv("KUBECONFIG")
@@ -43,8 +43,8 @@ var switchCmd = &cobra.Command{
 
 		// Set current context and namespace, if specified
 		conf.CurrentContext = ctxName
-		if ns != "" {
-			ctx.Namespace = ns
+		if flagNamespace != "" {
+			ctx.Namespace = flagNamespace
 		}
 
 		// Write updated config to file

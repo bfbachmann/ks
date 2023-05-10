@@ -21,10 +21,7 @@ var initCmd = &cobra.Command{
 	Long: `This command will create the ${HOME}/.ks directory and add initialization code to the user's rc file (.bashrc, .zshrc, config.fish).
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		force, err := cmd.Flags().GetBool("force")
-		handleFatal(err, "Error getting --force flag: %v\n, err")
-
-		if !force {
+		if !getBoolFlag(cmd, "force") {
 			// Abort if the .ks directory already exists (i.e. if we're already initialized)
 			info, err := os.Stat(ksHomeDir)
 			if err == nil && info.IsDir() {
@@ -33,7 +30,7 @@ var initCmd = &cobra.Command{
 		}
 
 		// Make sure the .ks directory exists
-		err = os.MkdirAll(ksHomeDir, 0755)
+		err := os.MkdirAll(ksHomeDir, 0755)
 		handleFatal(err, "Error creating %s: %v", ksHomeDir, err)
 
 		// Get the user's default shell
@@ -50,7 +47,9 @@ var initCmd = &cobra.Command{
 		case "fish":
 			shellInitFilePath = homeDir + ".config/fish/config.fish"
 		default:
-			fatalf(`Unknown shell: "%s"`, shellBaseName)
+			infof(`Unknown shell "%s". Changes would not be made automatically.`, shellBaseName)
+			infof(`To initialize manually, place the following code at the bottom of your shell's equivalent of .bashrc.`)
+			fatalf(shellInitScript)
 		}
 
 		// Open the shell init file

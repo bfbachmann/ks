@@ -14,8 +14,7 @@ var currentCmd = &cobra.Command{
 	Long: `Print information about the current context
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		verbose, err := cmd.Flags().GetBool("verbose")
-		handleFatal(err, "Error getting verbose flag: %v", err)
+		flagVerbose := getBoolFlag(cmd, "verbose")
 
 		// Load kubeconfig from file
 		confPath := os.Getenv("KUBECONFIG")
@@ -36,7 +35,7 @@ var currentCmd = &cobra.Command{
 		}
 
 		// Print current context
-		printCtx(conf.CurrentContext, conf.Contexts[conf.CurrentContext], verbose)
+		printCtx(conf.CurrentContext, conf.Contexts[conf.CurrentContext], flagVerbose)
 	},
 }
 

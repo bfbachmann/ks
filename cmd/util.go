@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/spf13/cobra"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/tools/clientcmd/api"
@@ -97,4 +98,18 @@ func writeKubeconfig(path string, conf *api.Config) error {
 	}
 
 	return nil
+}
+
+// getStringFlag returns the string value from the flag of the given name from the given command, or logs a fatal error.
+func getStringFlag(cmd *cobra.Command, name string) string {
+	flag, err := cmd.Flags().GetString(name)
+	handleFatal(err, "Error getting %s flag: %v", name, err)
+	return flag
+}
+
+// getBoolFlag returns the bool value from the flag of the given name from the given command, or logs a fatal error.
+func getBoolFlag(cmd *cobra.Command, name string) bool {
+	flag, err := cmd.Flags().GetBool(name)
+	handleFatal(err, "Error getting %s flag: %v", name, err)
+	return flag
 }

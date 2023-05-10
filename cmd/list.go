@@ -15,8 +15,7 @@ var listCmd = &cobra.Command{
 	Long: `List all contexts found in files or directories listed in $ks_PATH.
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		verbose, err := cmd.Flags().GetBool("verbose")
-		handleFatal(err, "Error getting verbose flag: %v", err)
+		flagVerbose := getBoolFlag(cmd, "verbose")
 
 		// Load kubeconfig from file
 		confPath := os.Getenv("KUBECONFIG")
@@ -28,7 +27,7 @@ var listCmd = &cobra.Command{
 		}
 
 		// Print current context first
-		printCtx(conf.CurrentContext+" (current)", conf.Contexts[conf.CurrentContext], verbose)
+		printCtx(conf.CurrentContext+" (current)", conf.Contexts[conf.CurrentContext], flagVerbose)
 
 		// Put remaining contexts in alphabetical order
 		others := make([]string, 0)
@@ -41,7 +40,7 @@ var listCmd = &cobra.Command{
 
 		// Print remaining contexts in order
 		for _, name := range others {
-			printCtx(name, conf.Contexts[name], verbose)
+			printCtx(name, conf.Contexts[name], flagVerbose)
 		}
 	},
 }
