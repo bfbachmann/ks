@@ -19,8 +19,17 @@ var currentCmd = &cobra.Command{
 
 		// Load kubeconfig from file
 		confPath := os.Getenv("KUBECONFIG")
+		if confPath == "" {
+			fatalf("KUBECONFIG is not set. Please make sure KUBECONFIG is set correctly.")
+		}
+
 		conf, err := loadKubeconfig([]string{confPath})
-		handleFatal(err, "Error loading config from %s: %v", confPath, err)
+		handleFatal(
+			err,
+			"Error loading config from %s: %v. Please make sure KUBECONFIG is set correctly.",
+			confPath,
+			err,
+		)
 
 		if len(conf.Contexts) == 0 {
 			infof("No contexts found. Please make sure your KSPATH is set correctly.")

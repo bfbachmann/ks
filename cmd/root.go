@@ -71,8 +71,10 @@ func init() {
 	}
 
 	// First we need to get the current context and namespace, so we can make sure not to overwrite it later
-	var currentCtxName string
-	var currentNs string
+	var (
+		currentCtxName string
+		currentNs      string
+	)
 	if existingConfPath := os.Getenv("KUBECONFIG"); existingConfPath != "" {
 		conf, err := loadKubeconfig([]string{existingConfPath})
 		handleFatal(err, "Error loading existing config from %s: %v", existingConfPath, err)
@@ -107,7 +109,7 @@ func init() {
 			newNs = newCtx.Namespace
 		}
 		infof(
-			`WARNING: Context %s no longer exists. Current context is now %s (namespace %s).`,
+			`WARNING: Context "%s" no longer exists. Current context is now "%s" (namespace: "%s").`,
 			currentCtxName,
 			conf.CurrentContext,
 			newNs,

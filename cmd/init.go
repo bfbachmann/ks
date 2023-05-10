@@ -29,7 +29,7 @@ shell initialization script (.bashrc, .zshrc, config.fish).
 			// Abort if the .ks directory already exists (i.e. if we're already initialized)
 			info, err := os.Stat(ksHomeDir)
 			if err == nil && info.IsDir() {
-				fatalf("Already initialized. Use --force flag to for reinitialization.")
+				fatalf("Already initialized. Use --force flag to force reinitialization.")
 			}
 		}
 
@@ -51,7 +51,7 @@ shell initialization script (.bashrc, .zshrc, config.fish).
 		case "fish":
 			shellInitFilePath = homeDir + ".config/fish/config.fish"
 		default:
-			fatalf("unknown shell: %s", shellBaseName)
+			fatalf(`unknown shell: "%s"`, shellBaseName)
 		}
 
 		// Open the shell init file
