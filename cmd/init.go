@@ -18,8 +18,7 @@ var initCmd = &cobra.Command{
 	Use:     "init",
 	Aliases: []string{"i"},
 	Short:   "Initialize ks",
-	Long: `This command will create the ${HOME}/.ks directory and add an initialization script to the user's 
-shell initialization script (.bashrc, .zshrc, config.fish).
+	Long: `This command will create the ${HOME}/.ks directory and add initialization code to the user's rc file (.bashrc, .zshrc, config.fish).
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		force, err := cmd.Flags().GetBool("force")
@@ -51,7 +50,7 @@ shell initialization script (.bashrc, .zshrc, config.fish).
 		case "fish":
 			shellInitFilePath = homeDir + ".config/fish/config.fish"
 		default:
-			fatalf(`unknown shell: "%s"`, shellBaseName)
+			fatalf(`Unknown shell: "%s"`, shellBaseName)
 		}
 
 		// Open the shell init file
@@ -63,8 +62,10 @@ shell initialization script (.bashrc, .zshrc, config.fish).
 		_, err = fmt.Fprintln(initFile, shellInitScript)
 		handleFatal(err, "Error writing file %s: %v", shellInitFilePath, err)
 
-		infof(`Initialized. Use "ks activate" to use kubeconfig generated from KSPATH for new shell sessions.
-`)
+		infof(
+			`Initialized. Changes were made to %s. Use "ks activate" to use kubeconfig generated from KSPATH for new shell sessions.`,
+			shellInitFilePath,
+		)
 	},
 }
 
