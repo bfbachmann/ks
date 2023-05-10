@@ -72,7 +72,6 @@ func loadKubeconfig(paths []string) (*api.Config, error) {
 		}); err != nil {
 			return nil, err
 		}
-
 	}
 
 	// Load all the located kubeconfig files

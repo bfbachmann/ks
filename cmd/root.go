@@ -13,6 +13,7 @@ var (
 	ksHomeDir        string
 	masterConfigPath string
 	initPath         string
+	kubeconfigPaths  []string
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -86,16 +87,16 @@ func init() {
 	}
 
 	// Parse paths from envvar, appending the master config file if it exists
-	paths := strings.Split(ksPath, ":")
+	kubeconfigPaths = strings.Split(ksPath, ":")
 	_, err = os.Stat(masterConfigPath)
 	if err != nil && !os.IsNotExist(err) {
 		fatalf("Error checking file %s: %v", masterConfigPath, err)
 	} else if err == nil {
-		paths = append(paths, masterConfigPath)
+		kubeconfigPaths = append(kubeconfigPaths, masterConfigPath)
 	}
 
 	// Load kubeconfig
-	conf, err := loadKubeconfig(paths)
+	conf, err := loadKubeconfig(kubeconfigPaths)
 	handleFatal(err, "Error loading config: %v", err)
 
 	// Make sure we restore the current context and namespace, if the context still exists. Otherwise, print a warning
