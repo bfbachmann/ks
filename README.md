@@ -1,12 +1,14 @@
 # ks
 
-`ks` (short for "kube switch") is a simple command line utility for managing and switching between Kubernetes contexts
+`ks` (short for "kube switch") is a simple command-line tool for managing and switching between Kubernetes contexts
 and namespaces. It is primarily designed to handle cases where the user has multiple and frequently-changing kubeconfig
 files.
 
 ## Installing
 
 Find the appropriate binary for your system under [releases](https://github.com/bfbachmann/ks/releases).
+
+You can also build it yourself using `make install` (`go build && go install`).
 
 ## How It Works
 
