@@ -9,7 +9,7 @@ import (
 
 // newCmd represents the new command
 var newCmd = &cobra.Command{
-	Use:     "new <name>",
+	Use:     "new <context>",
 	Aliases: []string{"n", "create"},
 	Args:    cobra.ExactArgs(1),
 	Short:   "Create a new context",
@@ -30,7 +30,7 @@ var newCmd = &cobra.Command{
 		}
 
 		conf, err := loadKubeconfig([]string{confPath})
-		handleFatal(
+		handleFatalf(
 			err,
 			"Error loading config from %s: %v. Please make sure KUBECONFIG is set correctly.",
 			confPath,
@@ -71,7 +71,7 @@ var newCmd = &cobra.Command{
 
 		// Write config to file
 		err = writeKubeconfig(confPath, conf)
-		handleFatal(err, "Error writing config to %s: %v", confPath, err)
+		handleFatalf(err, "Error writing config to %s: %v", confPath, err)
 
 		infof("Created context %s.", argName)
 	},

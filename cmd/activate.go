@@ -19,7 +19,7 @@ Use "ks deactivate" to undo.
 	Run: func(cmd *cobra.Command, args []string) {
 		// Write the init.sh file that will modify KUBECONFIG
 		err := os.WriteFile(initPath, []byte(fmt.Sprintf("export KUBECONFIG=%s", masterConfigPath)), 0644)
-		handleFatal(err, "Error writing %s: %v", initPath, err)
+		handleFatalf(err, "Error writing %s: %v", initPath, err)
 
 		infof("Activated. KUBECONFIG will be set to %s for future shell sessions.", masterConfigPath)
 	},

@@ -23,7 +23,7 @@ var currentCmd = &cobra.Command{
 		}
 
 		conf, err := loadKubeconfig([]string{confPath})
-		handleFatal(
+		handleFatalf(
 			err,
 			"Error loading config from %s: %v. Please make sure KUBECONFIG is set correctly.",
 			confPath,

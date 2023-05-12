@@ -28,7 +28,7 @@ var switchCmd = &cobra.Command{
 		// Load kubeconfig from file
 		confPath := os.Getenv("KUBECONFIG")
 		conf, err := loadKubeconfig([]string{confPath})
-		handleFatal(err, "Error loading config from %s: %v", confPath, err)
+		handleFatalf(err, "Error loading config from %s: %v", confPath, err)
 
 		// Get context to switch to, defaulting to current context if one was not specified
 		ctxName := conf.CurrentContext
@@ -49,7 +49,7 @@ var switchCmd = &cobra.Command{
 
 		// Write updated config to file
 		err = writeKubeconfig(masterConfigPath, conf)
-		handleFatal(err, "Error writing config: %v", err)
+		handleFatalf(err, "Error writing config: %v", err)
 		infof(`Switched to context "%s" (namespace: "%s")`, ctxName, ctx.Namespace)
 	},
 }

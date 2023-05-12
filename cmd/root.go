@@ -51,7 +51,7 @@ func init() {
 	masterConfigPath = ksHomeDir + "/config"
 	initPath = ksHomeDir + "/init.sh"
 
-	// Abort if we're not initialized (i.e. the .ks director doesn't exist)
+	// Abort if we're not initialized (i.e. the .ks directory doesn't exist)
 	info, err := os.Stat(ksHomeDir)
 	if err != nil {
 		if !os.IsNotExist(err) {
@@ -77,12 +77,21 @@ func init() {
 		currentNs      string
 	)
 	if existingConfPath := os.Getenv("KUBECONFIG"); existingConfPath != "" {
-		conf, err := loadKubeconfig([]string{existingConfPath})
-		handleFatal(err, "Error loading existing config from %s: %v", existingConfPath, err)
+		// Make sure the file still exists before trying to load it. If it doesn't we'll just skip this step since
+		// there is no current context in this case.
+		_, err = os.Stat(existingConfPath)
+		if err != nil && !os.IsNotExist(err) {
+			// Some unexpected error occurred
+			fatalf("Error checking for config at %s: %v.", existingConfPath, err)
+		} else if err == nil {
+			// The file exists
+			conf, err := loadKubeconfig([]string{existingConfPath})
+			handleFatalf(err, "Error loading existing config from %s: %v", existingConfPath, err)
 
-		currentCtxName = conf.CurrentContext
-		if ctx, ok := conf.Contexts[currentCtxName]; ok {
-			currentNs = ctx.Namespace
+			currentCtxName = conf.CurrentContext
+			if ctx, ok := conf.Contexts[currentCtxName]; ok {
+				currentNs = ctx.Namespace
+			}
 		}
 	}
 
@@ -97,7 +106,7 @@ func init() {
 
 	// Load kubeconfig
 	conf, err := loadKubeconfig(kubeconfigPaths)
-	handleFatal(err, "Error loading config: %v", err)
+	handleFatalf(err, "Error loading config: %v", err)
 
 	// Make sure we restore the current context and namespace, if the context still exists. Otherwise, print a warning
 	// message to let the user know that their current context has changed.
@@ -109,8 +118,8 @@ func init() {
 		if newCtx, ok := conf.Contexts[conf.CurrentContext]; ok {
 			newNs = newCtx.Namespace
 		}
-		infof(
-			`WARNING: Context "%s" no longer exists. Current context is now "%s" (namespace: "%s").`,
+		warnf(
+			`Context "%s" no longer exists. Current context is now "%s" (namespace: "%s").`,
 			currentCtxName,
 			conf.CurrentContext,
 			newNs,
@@ -119,5 +128,5 @@ func init() {
 
 	// Encode and write to file
 	err = writeKubeconfig(masterConfigPath, conf)
-	handleFatal(err, "Error writing config: %v", err)
+	handleFatalf(err, "Error writing config: %v", err)
 }

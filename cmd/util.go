@@ -14,8 +14,8 @@ import (
 	"sigs.k8s.io/yaml"
 )
 
-// handleFatal prints the given message and exits with code 1 if the error is not nil. Otherwise, it does nothing.
-func handleFatal(err error, format string, a ...any) {
+// handleFatalf prints the given message and exits with code 1 if the error is not nil. Otherwise, it does nothing.
+func handleFatalf(err error, format string, a ...any) {
 	if err != nil {
 		fatalf(format, a...)
 	}
@@ -23,7 +23,7 @@ func handleFatal(err error, format string, a ...any) {
 
 // fatalf prints an error message and immediately exits with code 1.
 func fatalf(format string, a ...any) {
-	infof(format, a...)
+	infof("FATAL: "+format, a...)
 	os.Exit(1)
 }
 
@@ -32,10 +32,21 @@ func infof(format string, a ...any) {
 	fmt.Printf(format+"\n", a...)
 }
 
+// warnf prints an warning message.
+func warnf(format string, a ...any) {
+	fmt.Printf("WARNING: "+format+"\n", a...)
+}
+
 // printCtx prints information about a context.
 func printCtx(name string, ctx *api.Context, verbose bool) {
 	if verbose {
-		infof("%s\n  Cluster: %s\n  Namespace: %s\n", name, ctx.Cluster, ctx.Namespace)
+		infof(
+			"%s\n  Location: %s\n  Cluster: %s\n  Namespace: %s\n",
+			name,
+			ctx.LocationOfOrigin,
+			ctx.Cluster,
+			ctx.Namespace,
+		)
 	} else {
 		infof("%s", name)
 	}
@@ -103,13 +114,13 @@ func writeKubeconfig(path string, conf *api.Config) error {
 // getStringFlag returns the string value from the flag of the given name from the given command, or logs a fatal error.
 func getStringFlag(cmd *cobra.Command, name string) string {
 	flag, err := cmd.Flags().GetString(name)
-	handleFatal(err, "Error getting %s flag: %v", name, err)
+	handleFatalf(err, "Error getting %s flag: %v", name, err)
 	return flag
 }
 
 // getBoolFlag returns the bool value from the flag of the given name from the given command, or logs a fatal error.
 func getBoolFlag(cmd *cobra.Command, name string) bool {
 	flag, err := cmd.Flags().GetBool(name)
-	handleFatal(err, "Error getting %s flag: %v", name, err)
+	handleFatalf(err, "Error getting %s flag: %v", name, err)
 	return flag
 }

@@ -25,7 +25,7 @@ env var. If this context is the current context, the current context will be als
 		}
 
 		conf, err := loadKubeconfig([]string{confPath})
-		handleFatal(
+		handleFatalf(
 			err,
 			"Error loading config from %s: %v. Please make sure KUBECONFIG is set correctly.",
 			confPath,
@@ -54,7 +54,7 @@ env var. If this context is the current context, the current context will be als
 
 		// Write config to file
 		err = writeKubeconfig(confPath, conf)
-		handleFatal(err, "Error writing config to %s: %v", confPath, err)
+		handleFatalf(err, "Error writing config to %s: %v", confPath, err)
 
 		infof("Context %s renamed to %s.", argOldName, argNewName)
 	},

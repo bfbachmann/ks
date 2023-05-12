@@ -31,7 +31,7 @@ var initCmd = &cobra.Command{
 
 		// Make sure the .ks directory exists
 		err := os.MkdirAll(ksHomeDir, 0755)
-		handleFatal(err, "Error creating %s: %v", ksHomeDir, err)
+		handleFatalf(err, "Error creating %s: %v", ksHomeDir, err)
 
 		// Get the user's default shell
 		shell := os.Getenv("SHELL")
@@ -54,12 +54,12 @@ var initCmd = &cobra.Command{
 
 		// Open the shell init file
 		initFile, err := os.OpenFile(shellInitFilePath, os.O_APPEND|os.O_WRONLY, 0644)
-		handleFatal(err, "Error updating %s: %v", shellInitFilePath, err)
+		handleFatalf(err, "Error updating %s: %v", shellInitFilePath, err)
 		defer initFile.Close()
 
 		// Write some data to the file
 		_, err = fmt.Fprintln(initFile, shellInitScript)
-		handleFatal(err, "Error writing file %s: %v", shellInitFilePath, err)
+		handleFatalf(err, "Error writing file %s: %v", shellInitFilePath, err)
 
 		infof(
 			`Initialized. Changes were made to %s. Use "ks activate" to use kubeconfig generated from KSPATH for new shell sessions.`,
