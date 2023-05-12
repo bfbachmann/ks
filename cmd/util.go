@@ -103,8 +103,7 @@ func writeKubeconfig(path string, conf *api.Config) error {
 		return fmt.Errorf("error converting merged JSON kubeconfig to YAML: %v", err)
 	}
 
-	err = os.WriteFile(path, output, 0644)
-	if err != nil {
+	if err = os.WriteFile(path, output, 0600); err != nil {
 		return fmt.Errorf("error writing merged kubeconfig: %v", err)
 	}
 
