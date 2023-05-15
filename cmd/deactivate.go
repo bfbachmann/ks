@@ -11,8 +11,9 @@ var deactivateCmd = &cobra.Command{
 	Use:     "deactivate",
 	Aliases: []string{"d"},
 	Args:    cobra.ExactArgs(0),
-	Short:   "Return to regular KUBECONFIG",
-	Long: `This command will make it so ks has no effect on your KUBECONFIG.
+	Short:   "Return to regular KUBECONFIG for new shell sessions",
+	Long: `This command will make it so ks has no effect on your KUBECONFIG. You may still use ks commands to view and
+manage contexts and namespaces for your current KUBECONFIG.
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		err := os.RemoveAll(initPath)

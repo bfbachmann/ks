@@ -10,6 +10,13 @@ Find the appropriate binary for your system under [releases](https://github.com/
 
 You can also build it yourself using `make install` (`go build && go install`).
 
+## Uninstalling
+
+```shell
+rm $(which ks)
+rm -r ~/.ks
+```
+
 ## How It Works
 
 The main function of `ks` is to find all kubeconfig files listed in the environment variable `KSPATH` (defaults to
@@ -23,7 +30,7 @@ This has a few benefits:
 3. Any newly-added, edited, or deleted kubeconfig under `KSPATH` will automatically be available on execution of any 
 `ks` command.
 
-## Basic Usage
+## Usage
 
 ```
 Use the KSPATH environment variable to list files and directories in which to search for kubeconfig files.
