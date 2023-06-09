@@ -6,15 +6,26 @@ files.
 
 ## Installing
 
+### From Command-line
+
 Find the appropriate binary for your system under [releases](https://github.com/bfbachmann/ks/releases).
 
-You can also build it yourself using `make install` (`go build && go install`).
+```shell
+curl -sSL "https://github.com/bfbachmann/ks/releases/latest/download/ks_$(uname -s)_$(uname -m)" > ks
+sudo install ks /usr/local/bin && rm ks
+```
+
+### With Go
+
+```shell
+go install github.com/bfbachmann/ks@latest
+```
 
 ## Uninstalling
 
 ```shell
-rm $(which ks)
-rm -r ~/.ks
+sudo rm -f $(which ks)
+rm -rf ~/.ks
 ```
 
 ## How It Works

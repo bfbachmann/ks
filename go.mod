@@ -1,4 +1,4 @@
-module ks
+module github.com/bfbachmann/ks
 
 go 1.20
 
